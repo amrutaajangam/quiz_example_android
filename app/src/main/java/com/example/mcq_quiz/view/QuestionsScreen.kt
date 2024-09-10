@@ -1,4 +1,4 @@
-package com.example.mcq_quiz.View
+package com.example.mcq_quiz.view
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -11,17 +11,17 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.mcq_quiz.Model.Question
-import com.example.mcq_quiz.ViewModel.QuestionsViewModel
+import com.example.mcq_quiz.model.Question
+import com.example.mcq_quiz.viewModel.QuestionsViewModel
 
 @Composable
-fun QuestionsListScreen (viewModel: QuestionsViewModel,onQuestionClick : (Question)->Unit){
+fun QuestionsListScreen(viewModel: QuestionsViewModel, onQuestionClick: (Question) -> Unit) {
 
-    val questions by viewModel.questions.observeAsState(emptyList())
+    val questions by viewModel.questions.collectAsState()
     val scaffoldState = rememberScaffoldState()
 
     Scaffold(
@@ -29,11 +29,11 @@ fun QuestionsListScreen (viewModel: QuestionsViewModel,onQuestionClick : (Questi
         topBar = {
             TopAppBar(title = { Text(text = "Questions List") })
         }
-    ){
+    ) {
         Column(Modifier.padding(it)) {
             LazyColumn {
-                items(questions){ question->
-                    QuestionItem(question = question, onClick = {onQuestionClick(question)})
+                items(questions) { question ->
+                    QuestionItem(question = question, onClick = { onQuestionClick(question) })
                 }
             }
         }
@@ -42,8 +42,7 @@ fun QuestionsListScreen (viewModel: QuestionsViewModel,onQuestionClick : (Questi
 }
 
 @Composable
-fun QuestionItem(question: Question,onClick:()->Unit)
-{
+fun QuestionItem(question: Question, onClick: () -> Unit) {
     Text(
         text = question.question,
         modifier = Modifier

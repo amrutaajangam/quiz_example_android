@@ -1,4 +1,4 @@
-package com.example.mcq_quiz.View
+package com.example.mcq_quiz.view
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,22 +16,30 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.mcq_quiz.Model.Question
-import kotlinx.coroutines.launch
+import com.example.mcq_quiz.model.Question
+import com.example.mcq_quiz.viewModel.QuestionsViewModel
 
 @Composable
-fun QuestionDetailedScreen(question: Question) {
+fun QuestionDetailedScreen(viewModel: QuestionsViewModel, question: Question) {
     var selectedAnswer by remember { mutableStateOf<String?>(null) }
     val scaffoldState = rememberScaffoldState()
+    val answer by viewModel.answer.collectAsState()
 
-    val scope = rememberCoroutineScope()
+    LaunchedEffect(answer) {
+        answer?.let {
+            scaffoldState.snackbarHostState.showSnackbar(it)
+            viewModel.resetAnswerResult()
+        }
+    }
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -54,16 +62,7 @@ fun QuestionDetailedScreen(question: Question) {
                         .fillMaxWidth()
                         .clickable {
                             selectedAnswer = option
-                            val message = if (option == question.correctAnswer) {
-                                "Correct Answer!"
-                            } else {
-                                "Wrong Answer!"
-                            }
-
-                            scope.launch {
-                                scaffoldState.snackbarHostState.showSnackbar(message)
-                            }
-
+                            viewModel.checkAnswer(option, question.correctAnswer)
                         }
                         .padding(8.dp)
                 ) {
@@ -72,16 +71,7 @@ fun QuestionDetailedScreen(question: Question) {
                         selected = selectedAnswer == option,
                         onClick = {
                             selectedAnswer = option
-                            val message = if (option == question.correctAnswer) {
-                                "Correct Answer!"
-                            } else {
-                                "Wrong Answer!"
-                            }
-
-
-                            scope.launch {
-                                scaffoldState.snackbarHostState.showSnackbar(message)
-                            }
+                            viewModel.checkAnswer(option, question.correctAnswer)
                         }
                     )
                     Spacer(modifier = Modifier.width(8.dp))

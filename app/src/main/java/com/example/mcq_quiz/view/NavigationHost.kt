@@ -1,4 +1,4 @@
-package com.example.mcq_quiz.View
+package com.example.mcq_quiz.view
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.mcq_quiz.ViewModel.QuestionsViewModel
+import com.example.mcq_quiz.viewModel.QuestionsViewModel
 
 @Composable
 fun Navigation(viewModel: QuestionsViewModel) {
@@ -23,9 +23,9 @@ fun Navigation(viewModel: QuestionsViewModel) {
             arguments = listOf(navArgument("questionId") { type = NavType.IntType })
         ) { backStackEntry ->
             val questionId = backStackEntry.arguments?.getInt("questionId") ?: return@composable
-            val question = viewModel.questions.value?.find { it.id == questionId }
+            val question = viewModel.questions.value.find { it.id == questionId }
             question?.let {
-                QuestionDetailedScreen(question = it)
+                QuestionDetailedScreen(viewModel = viewModel, question = it)
             }
         }
     }
